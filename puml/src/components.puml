@@ -41,6 +41,22 @@ package "Projekt Metadatenpflege" {
         jt --> json
         qt --> qml
     }
+
+    package "Teilprojekt Report-Migration"{
+        [Bouncer-Client] as client
+
+        [Bouncer] as bouncer
+        () "REST GET" as bi
+        bi - bouncer
+
+        [Jasper-Server] as jasper
+        () "REST GET" as ji
+        ji - jasper
+
+        client --> bi
+        bouncer --> json
+        bouncer --> ji
+    }
 }
 
 cloud "INTERLIS-Repos" {
@@ -63,5 +79,6 @@ legend left
 	Bemerkungen:
     - Die Aggregation der GRETL und GRETL-Jenkins Informationen ist in Projekt "Kenne dein GRETL" zu lösen und ist damit "out of scope".
     - Ob der Model-Reader nur den DB-Katalog, nur das Modell, oder wie abgebildet beides lesen muss, ist zu klären.
+    - Ich möchte nach Möglichkeit das Teilprojekt "Report-Migration" loswerden, das "Loswerden" verursacht aber Mehraufwand.
 endlegend
 @enduml
