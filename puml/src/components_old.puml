@@ -1,0 +1,85 @@
+@startuml
+package "Projekt Metadatenpflege" {
+    package "Metadata" {
+        package "Transformers" {
+            [JsonTrafo] as jt
+            [QmlTrafo] as qt
+            [qmlcontent.json] as qj
+
+            jt --> qj
+            qj -up-> qt
+        }
+
+        package "Config" {
+            [Json Files] as json
+            [Qml File] as qml
+        }
+
+        package "SIMI" {
+            [GUI] as gui
+            [Entities] as class
+            () "REST GRETL" as gi
+
+            gui --> class
+            gi - class
+        }
+
+        database "Meta-DB" {
+            [Meta-Tables] as mdb
+        }
+
+		together {
+          [Model-Reader] as mr
+          () "REST GET" as mri
+          mr - mri
+        }
+        gui -left-> mri
+
+        class --> mdb : jdbc
+        jt --> mdb : db con
+
+        jt --> json
+        qt --> qml
+    }
+
+    package "Teilprojekt Report-Migration"{
+        [Bouncer-Client] as client
+
+        [Bouncer] as bouncer
+        () "REST GET" as bi
+        bi - bouncer
+
+        [Jasper-Server] as jasper
+        () "REST GET" as ji
+        ji - jasper
+
+        client --> bi
+        bouncer --> json
+        bouncer --> ji
+    }
+}
+
+cloud "INTERLIS-Repos" {
+    [INTERLIS-Model] as model
+}
+mr --> model
+
+database "Geo-DB" {
+    [Catalog] as cat
+}
+mr --> cat : db con
+
+[GRETL] as gretl
+gretl --> gi
+
+qj -[hidden]-> json
+model -[hidden]-> cat
+
+legend left
+	Bemerkungen:
+    - Die Aggregation der GRETL und GRETL-Jenkins Informationen ist in Projekt "Kenne dein GRETL" zu lösen und ist damit "out of scope".
+    - Der "Bulk-Exporter" zur Bereitstellung von XTF und Geopackage für den Datenbezug ist Teil des Projektes Datenbezug und damit "out of scope".
+    - Ob der Model-Reader nur den DB-Katalog, nur das Modell, oder wie abgebildet beides lesen muss, ist zu klären.
+    - Ich möchte nach Möglichkeit das Teilprojekt "Report-Migration" loswerden, das "Loswerden" verursacht aber Mehraufwand.
+endlegend
+@enduml
