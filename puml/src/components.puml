@@ -1,5 +1,4 @@
 @startuml
-
 package "Metadata" {
     package "Transformers" {
         [JsonTrafo] as jt
@@ -53,9 +52,20 @@ database "Geo-DB" {
 }
 mr --> cat : db con
 
+together {
+  [API / WGC Deployment] as pipe
+  () "Jenkins" as pi
+  pi - pipe
+}
+
+gui --> pi
+pipe --> jt
+pipe --> qt
+
 [GRETL] as gretl
 gretl --> gi
 
+gretl -[hidden]-> gui
 qj -[hidden]-> json
 model -[hidden]-> cat
 @enduml
